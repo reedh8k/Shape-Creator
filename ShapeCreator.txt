@@ -1,0 +1,27 @@
+     o
+    o o
+   o   o
+  o     o
+ o       o
+oooooooooo
+  o
+ o o
+oooo
+    2
+   2 2
+  2   2
+ 2     2
+222222222
+              o
+             o o
+            o   o
+           o     o
+          o       o
+         o         o
+        o           o
+       o             o
+      o               o
+     o                 o
+    o                   o
+   o                     o
+ooooooooooooooooooooooooooooo
