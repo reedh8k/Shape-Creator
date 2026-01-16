@@ -14,7 +14,7 @@ using namespace std;
 
 //Game
 //Inputs will be numbers
-enum State {
+enum State { //used for switch statement for rpg
     MAIN,
     INTRO,
     TOWN,
@@ -23,10 +23,10 @@ enum State {
     QUIT
 };
 
-enum Skill {
-    PA,
-    ASS,
-    GS
+enum Skill { //used for character skills
+    PA, //plot armor
+    ASS, //assassin
+    GS //gathering storm
 };
 
 struct Character {
@@ -40,7 +40,7 @@ struct Character {
     int dodgeChance;
     int commonPotions;
 };
-State intro(Character & , int & , ofstream & );
+State intro(Character & , int & , ofstream & ); 
 State skill(Character & , int & , ofstream & );
 State town(Character & , int & , ofstream & );
 State dead();
@@ -50,10 +50,10 @@ ofstream outFile("C:\\Users\\99210\\Documents\\GitHub\\Shape-Creator\\Both.txt")
 int main() {
     int shapeCount = 0;
     int totalUses = 0;
-
-    srand(static_cast < unsigned > (time(nullptr)));
+    srand(static_cast < unsigned > (time(nullptr))); //randomizes seed
     bool mainMenu = true;
-    if (outFile.is_open()) {
+
+    if (outFile.is_open()) { //verifies file is open
         outFile << "Game started." << endl;
     } else {
         cout << "Failed to open file." << endl;
@@ -61,15 +61,15 @@ int main() {
         return 1;
     }
 
-    while (mainMenu) {
+    while (mainMenu) { //main menu loop
         cout << "Do you want to play the game or use the shape creator?\n(1) Play the game\n(2) Use the shape creator\n(3) Quit\n";
         int menuChoice;
         cin >> menuChoice;
 
-        if (menuChoice == 1) {
+        if (menuChoice == 1) { //starts rpg
             State currentState = INTRO;
             int playerRep = 50;
-            int playerInf = 0;
+            int playerInf = 0; //influences dialogue choices
             currentState = INTRO;
             Character player;
             while (currentState != QUIT) {
@@ -263,7 +263,7 @@ State intro(Character & player, int & playerInf, ofstream & log) {
     cout << "Please select your character's name.\n";
     cin >> player.name;
     log << "Welcome, " << player.name << "!\n";
-    player.gold = 0;
+    player.gold = 0; //initializes Character player stats
     player.health = 100;
     player.maxHealth = 100;
     player.damage = 8;
@@ -274,7 +274,7 @@ State intro(Character & player, int & playerInf, ofstream & log) {
     cout << ">\"" << player.name << ", I'll find you, okay? Just please... stay alive. Do you understand?\"\n";
     cout << "Select:\n(1) Nod and say yes.\n(2) Deny knowing him.\n";
     cout << "[WARNING: Choices like this may influence the story.]\n";
-    while (!cont) {
+    while (!cont) { //choice loop in case of invalid selections
         cin >> sel;
         if (sel == 1) {
             cout << "------------------------\n";
@@ -336,7 +336,7 @@ State skill(Character & player, int & playerInf, ofstream & log) {
     cout << "Darkness surrounds you. You feel weightless, as if you're floating in midair.\n";
     cout << "After a moment, you can open your eyes again, but all that surrounds you is an infinite void.\n";
 
-    if (playerInf > 0) {
+    if (playerInf > 0) { //outsider dialogue based on previous choice with the older man
         cout << "A melodic, seemingly feminine voice rings out in your ear.\n";
         cout << ">\"Another outsider? What a turn of events. Perhaps this is just what we needed, [UNINTELLIGIBLE].\"\n";
         cout << "A more masculine voice responds.\n";
@@ -360,7 +360,7 @@ State skill(Character & player, int & playerInf, ofstream & log) {
 
     cout << "Select a card (1-3):\n";
 
-    while (!cont) {
+    while (!cont) { //card selection loop
         cin >> sel;
 
         if (sel == 1) {
@@ -411,7 +411,7 @@ State town(Character & player, int & playerInf, ofstream & log) {
     }
 
     while (!cont) {
-        if (explore && inn && shop) {
+        if (explore && inn && shop) { //traps user in loop until all 3 options are done
             cont = true;
         } else {
             cout << "Select:\n(1) Explore the town\n(2) Visit the inn\n(3) Go to the market\n";
@@ -454,14 +454,14 @@ State town(Character & player, int & playerInf, ofstream & log) {
 
     cout << "You arrive at the shrine to find a dark, shadowy figure looming over a fallen priest. The figure turns to face you, its eyes glowing with a purple energy.\n";
     cout << "Without warning, the figure lunges at you, and you find yourself in combat!\n";
-    Character goblin;
+    Character goblin; //creates first enemy
     goblin.name = "Shadow Fiend";
     goblin.health = 80;
     goblin.maxHealth = 80;
     goblin.damage = 8;
-    goblin.priority = 1;
+    goblin.priority = 1; //sets who goes first in the fight unless player has assassination skill
     goblin.gold = 5;
-    while (!cont) {
+    while (!cont) { //forces user to fight
         cout << "Select:\n(1) Fight\n";
         cin >> sel;
         if (sel == 1) {
@@ -475,7 +475,7 @@ State town(Character & player, int & playerInf, ofstream & log) {
     fight(player, goblin);
     log << player.name << " has defeated the Shadow Fiend who endangered the priest.\n";
     cout << "-------------------------\n";
-    if (player.health <= 0) {
+    if (player.health <= 0) { //checks if player lost fight
         cout << "-------------------------\n";
         cout << "You have been defeated by the Shadow Fiend. Your journey ends here.\n";
         cout << "[GAME OVER]\n";
@@ -506,10 +506,10 @@ State town(Character & player, int & playerInf, ofstream & log) {
         if (sel == 1) {
             cout << "-------------------------\n";
             cout << "You enter a cozy inn where you can rest and recover your health.\n";
-            player.health = player.maxHealth;
+            player.health = player.maxHealth; //restores health to full
             cout << "You exit the inn feeling refreshed and at full health.\n";
             log << player.name << " rested at the inn and restored health to full.\n";
-        } else if (sel == 2) {
+        } else if (sel == 2) { //shop
             log << player.name << " returned to the magical item shop in the market.\n";
             cout << "-------------------------\n";
             cout << "You head back to the market. The magical item shop you visited earlier is still there.\n";
@@ -517,7 +517,7 @@ State town(Character & player, int & playerInf, ofstream & log) {
             cout << "Upon entering, the barker greets you warmly and shows you a variety of mana-infused items that will aid you in your journey.\n\n";
             cout << "Items for Sale:\n";
             int itemSel;
-            while (!cont) {
+            while (!cont) { //shop loop
                 if (dagger) {
                     cout << "(1) Charged Dagger - SOLD OUT\n\n";
                 } else {
@@ -535,9 +535,9 @@ State town(Character & player, int & playerInf, ofstream & log) {
                     if (dagger) {
                         cout << "You have already purchased the Charged Dagger.\n";
                         continue;
-                    } else if (player.gold >= 15) {
-                        player.damage += 3;
-                        player.gold -= 15;
+                    } else if (player.gold >= 15) { //verifies enough gold
+                        player.damage += 3; //increases damage
+                        player.gold -= 15; //deducts gold
                         cout << "You purchased the Charged Dagger! Your damage is now " << player.damage << ".\n";
                         dagger = true;
                         log << player.name << " purchased the Charged Dagger, increasing damage to " << player.damage << ".\n";
@@ -607,7 +607,7 @@ State town(Character & player, int & playerInf, ofstream & log) {
         }
     }
     cont = false;
-    Character shadowTendrils;
+    Character shadowTendrils; //creating unbeatable enemy
     shadowTendrils.name = "Shadow Tendrils";
     shadowTendrils.health = 999999;
     shadowTendrils.maxHealth = 999999;
@@ -639,7 +639,7 @@ State town(Character & player, int & playerInf, ofstream & log) {
     cout << "End of Demo. Thank you for playing!\n";
     log << "-------------------------\n";
 
-    return QUIT;
+    return QUIT; //the end
 }
 
 State dead() {
@@ -650,7 +650,7 @@ State dead() {
 void fight(Character & player, Character & enemy) {
     if (player.priority < enemy.priority) {
         // Player strikes first
-        if (player.skill == ASS) {
+        if (player.skill == ASS) { //assassin skill
             cout << "Thanks to your Assassination skill, you strike first for double the damage!\n";
             cout << player.name << " attacks " << enemy.name << " for " << player.damage * 2 << " damage.\n";
             enemy.health -= player.damage * 2;
@@ -669,7 +669,7 @@ void fight(Character & player, Character & enemy) {
     while (player.health > 0 && enemy.health > 0) {
         // Enemy's turn
         cout << enemy.name << " attacks " << player.name << " for " << enemy.damage << " damage.\n";
-        if (player.skill == GS) {
+        if (player.skill == GS) { //gathering storm skill
             int dodgeChance = rand() % 100;
             if (dodgeChance < player.dodgeChance) {
                 cout << player.name << " dodged the attack, taking no damage!\n";
@@ -683,7 +683,7 @@ void fight(Character & player, Character & enemy) {
             player.health -= enemy.damage;
         }
         if (player.health <= 0) {
-            if (player.skill == PA) {
+            if (player.skill == PA) { //plot armor skill
                 int surviveChance = rand() % 100;
                 if (surviveChance < 50) {
                     player.health = 1;
@@ -700,7 +700,7 @@ void fight(Character & player, Character & enemy) {
         cout << player.name << "'s health: " << player.health << "\n";
 
         // Player's turn
-        if (player.skill == PA) {
+        if (player.skill == PA) { //plot armor critical strike
             int critChance = rand() % 100;
             if (critChance < 10) {
                 cout << "Critical strike! ";
