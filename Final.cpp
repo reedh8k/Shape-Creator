@@ -6,6 +6,10 @@
 
 #include <windows.h>
 
+#include <cstdlib>
+
+#include <ctime>
+
 using namespace std;
 
 //Game
@@ -36,18 +40,16 @@ struct Character {
     int dodgeChance;
     int commonPotions;
 };
-State intro(Character & , int &, ofstream &);
-State skill(Character & , int &, ofstream &);
-State town(Character & , int &, ofstream &);
+State intro(Character & , int & , ofstream & );
+State skill(Character & , int & , ofstream & );
+State town(Character & , int & , ofstream & );
 State dead();
 
 void fight(Character & , Character & );
-ofstream outFile("C:\\Users\\99210\\Documents\\GitHub\\Shape-Creator\\RPG.txt");
+ofstream outFile("C:\\Users\\99210\\Documents\\GitHub\\Shape-Creator\\Both.txt");
 int main() {
-    
-    #include <cstdlib>
-
-    #include <ctime>
+    int shapeCount = 0;
+    int totalUses = 0;
 
     srand(static_cast < unsigned > (time(nullptr)));
     bool mainMenu = true;
@@ -58,43 +60,200 @@ int main() {
         cout << "Please check the file path and try again." << endl;
         return 1;
     }
+
     while (mainMenu) {
-        State currentState = INTRO;
-        int playerRep = 50;
-        int playerInf = 0;
-        currentState = INTRO;
-        Character player;
-        while (currentState != QUIT) {
-            switch (currentState) {
-            case INTRO:
-                currentState = intro(player, playerInf, outFile);
-                break;
+        cout << "Do you want to play the game or use the shape creator?\n(1) Play the game\n(2) Use the shape creator\n(3) Quit\n";
+        int menuChoice;
+        cin >> menuChoice;
 
-            case SKILL:
-                currentState = skill(player, playerInf, outFile);
-                break;
+        if (menuChoice == 1) {
+            State currentState = INTRO;
+            int playerRep = 50;
+            int playerInf = 0;
+            currentState = INTRO;
+            Character player;
+            while (currentState != QUIT) {
+                switch (currentState) {
+                case INTRO:
+                    currentState = intro(player, playerInf, outFile);
+                    break;
 
-            case TOWN:
-                currentState = town(player, playerInf, outFile);
-                break;
+                case SKILL:
+                    currentState = skill(player, playerInf, outFile);
+                    break;
 
-            case DEAD:
-                currentState = dead();
-                break;
+                case TOWN:
+                    currentState = town(player, playerInf, outFile);
+                    break;
+
+                case DEAD:
+                    currentState = dead();
+                    break;
+
+                default:
+                    currentState = QUIT;
+                    break;
+                }
             }
-        }
-        cout << "Would you like to return to the main menu?\n(1) Yes\n(2) No\n";
-        int menuSel;
-        cin >> menuSel;
-        if (menuSel == 1) {
-            mainMenu = true;
-            outFile << "Player restarts the game from main menu.\n";
-        } else {
-            outFile << "Player exits the game from main menu.\n";
+
+            cout << "Would you like to return to the main menu?\n(1) Yes\n(2) No\n";
+            int menuSel;
+            cin >> menuSel;
+            if (menuSel == 1) {
+                mainMenu = true;
+                outFile << "User goes back to the main menu.\n";
+            } else {
+                outFile << "User exits the game from main menu.\n";
+                mainMenu = false;
+            }
+            totalUses++;
+        } else if (menuChoice == 2) {
+            outFile << "User enters the shape creator from main menu.\n";
+            bool cont = true;
+            while (cont == true) {
+                char character;
+                int size;
+                char shape;
+                //asks for desired shape
+                cout << "Please input the shape you want out of the following: s = square, t = triangle, d = diamond.\n";
+                cin >> shape;
+                //identifies shape
+                if (shape == 's') { //square
+                    cout << "You have selected: Square\nPlease input the character used to make up the square and the size.\n";
+                    cin >> character;
+                    cin >> size;
+                    if (size > 0) {
+                        for (int j = 1; j <= size; j++) {
+                            for (int i = 1; i <= size; i++) {
+                                outFile << character << setw(3);
+                            }
+                            outFile << "\n";
+                        }
+                        shapeCount++;
+                    } else cout << "Invalid input for size.";
+                } else if (shape == 't') { //triangle
+                    char option;
+                    //specifies triangle type
+                    cout << "You have selected: Triangle\nPlease input one of the following letters: e = equilateral, r = right\n";
+                    cin >> option;
+                    //identifies type
+                    if (option == 'e') { //equilateral
+                        cout << "Please select the character that will make up the shape, and the size of a side, separated by spaces.\n";
+                        cin >> character;
+                        cin >> size;
+                        if (size > 0) {
+                            outFile << setw(1 + size * .5) << character << endl;
+                            for (int i = 1; i <= (size * .433); i++) { //.433 is the rough estimate of amount of rows based on height and space between rows (.866/2)
+                                outFile << setw(1 + size * .5 - i) << character;
+                                outFile << setw(2 * i) << character << endl;
+                            }
+                            for (int i = 1; i <= size; i++) {
+                                outFile << character;
+                            }
+                            outFile << endl;
+                            shapeCount++;
+                        } else {
+                            cout << "Invalid size input.\n";
+                        }
+                    } else if (option == 'r') {
+                        int height;
+                        cout << "Please select the character that will make up the shape, and the length of the base, and the height, separated by spaces.\n";
+                        cin >> character;
+                        cin >> size;
+                        cin >> height;
+                        if (size > 0 && height > 0) {
+                            outFile << character << endl;
+                            for (int i = 1; i <= (height / 2.5); i++) { //rough estimate to help with space between rows(not applied in square creator)
+                                outFile << character;
+                                outFile << setw(i * 1.5) << character << endl;
+                            }
+                            for (int i = 1; i <= size; i++) {
+                                outFile << character;
+                            }
+                            outFile << endl;
+                            shapeCount++;
+                        } else {
+                            cout << "Invalid input for size.\n";
+                        }
+                    } else {
+                        cout << "Invalid input.";
+                    }
+                } else if (shape == 'd') {
+                    cout << "Please select the character that will make up the shape, and the size of a side, separated by spaces. (Diamond works best with larger numbers)\n";
+                    cin >> character;
+                    cin >> size;
+                    if (size > 0) {
+                        outFile << setw(1 + size * .5) << character << endl;
+                        for (int i = 1; i <= (size * .433); i++) { //.433 is the rough estimate of amount of rows based on height and space between rows (.866/2)
+                            outFile << setw(1 + size * .5 - i) << character;
+                            outFile << setw(2 * i) << character << endl;
+                        }
+                        for (int i = (size * .43); i >= 1; i--) {
+                            outFile << setw(1 + size * .5 - i) << character;
+                            outFile << setw(2 * i) << character << endl;
+                        }
+                        outFile << setw(1 + size * .5) << character << endl;
+                        outFile << endl;
+                        shapeCount++;
+                    } else {
+                        cout << "Invalid input for size.\n";
+                    }
+                } else {
+                    cout << "Invalid input.\n";
+                }
+                outFile << endl;
+                char another;
+
+                if (shapeCount == 1) {
+                    cout << "You have created " << shapeCount << " shape.\n";
+                } else {
+                    cout << "You have created " << shapeCount << " shapes.\n";
+                }
+                bool next = false;
+                while (next == false) {
+                    cout << "Would you like to create another shape? (y = yes, n = no)\n";
+                    cin >> another;
+                    if (another == 'n') {
+                        outFile << "-------------------------\n";
+                        next = true;
+                        cont = false;
+                        string line;
+                        ifstream inFile("C:\\Users\\99210\\Documents\\GitHub\\Shape-Creator\\Both.txt");
+
+                        cout << "\nReading from \"C:\\Users\\99210\\Documents\\GitHub\\Shape-Creator\\Both.txt\"" << endl;
+                        if (shapeCount == 0) {
+                            cout << "You have created 0 shapes\n";
+                        } else if (shapeCount == 1) {
+                            cout << "You have created the following 1 shape: \n";
+                        } else {
+                            cout << "You have created the following " << shapeCount << " shapes: " << endl;
+                        }
+                        if (inFile.is_open()) {
+                            while (getline(inFile, line)) { //reads line by line
+                                cout << line << endl;
+                            }
+                            inFile.close();
+                        } else {
+                            cout << "Unable to open file for reading" << endl;
+                        }
+                    } else if (another == 'y') {
+                        next = true;
+                    } else {
+                        cout << "Invalid input.\n";
+                    }
+                    totalUses++;
+                }
+            }
+        } else if (menuChoice == 3) {
+            outFile << "Player exits the program from main menu.\n";
             mainMenu = false;
+        } else {
+            cout << "Invalid input.\n";
         }
     }
+    outFile << "Total uses of the program: " << totalUses << endl;
     outFile.close();
+    return 0;
 }
 
 State intro(Character & player, int & playerInf, ofstream & log) {
@@ -403,7 +562,7 @@ State town(Character & player, int & playerInf, ofstream & log) {
                     if (player.gold >= 5) {
                         player.commonPotions++;
                         player.gold -= 5;
-                        cout << "You purchased a Common Potion! You now have " << player.commonPotions << "Common Potions.\n";
+                        cout << "You purchased a Common Potion! You now have " << player.commonPotions << " Common Potions.\n";
                         log << player.name << " purchased a Common Potion, totaling " << player.commonPotions << ".\n";
                     } else {
                         cout << "You don't have enough gold for that item.\n";
